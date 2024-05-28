@@ -28,6 +28,28 @@ def create_tenant_database(sender, instance, created, **kwargs):
         cur.close()
         conn.close()
 
-        migrate_command = f"python manage.py migrate --database={db_name}"
-        os.system(migrate_command)
+        import time
+        time.sleep(15)
+        # migrate_command = f"python manage.py migrate --database={db_name}"
+        # subprocess.run(migrate_command, shell=True)
+        from django.conf import settings
+        from django.db import connections
+        from django.core.management import call_command
+
+        default_db_config = settings.DATABASES['default']
+        connections.databases[db_name] = {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": db_name,
+            "USER": "postgres",
+            "PASSWORD": "admin",
+            "HOST": "localhost",
+            "PORT": 5432,
+            "TIME_ZONE": settings.TIME_ZONE,
+            'CONN_MAX_AGE': None,
+            "CONN_HEALTH_CHECKS": False,
+            'OPTIONS': default_db_config.get('OPTIONS', {}),
+        }
+
+        # Ejecutar migraciones para la base de datos del inquilino
+        call_command("migrate", database=db_name)
         print("hecho")

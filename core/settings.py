@@ -53,7 +53,9 @@ MIDDLEWARE = [
     "tenants.middleware.TenantMiddleware",
 ]
 
-DATABASE_ROUTERS = ["tenants.db_router.TenantRouter"]
+DATABASE_ROUTERS = [
+    "tenants.db_router.TenantRouter",
+]
 
 ROOT_URLCONF = "core.urls"
 
